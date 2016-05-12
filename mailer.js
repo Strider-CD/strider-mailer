@@ -39,15 +39,16 @@ module.exports = function (config) {
         case (smtp.secure.toLowerCase() === "true"):
           smtpConfig.secureConnection = true;
           break;
-        case (smtp.secure.toLowerCase() === "false"):
-          smtpConfig.secureConnection = false;
-          break;
         //if secure is not set by config, check traditionally secured ports
-        case (!smtp.secure && smtpConfig.port == 465 || 587):
+        case (smtpConfig.port == (465 || 587)):
           smtpConfig.secureConnection = true;
           break;
         case (!smtp.secure):
           console.log('WARNING: no SMTP Secure not configured. Turn "false" by dafaults.');
+          smtpConfig.secureConnection = false;
+          break;
+        default:
+          smtpConfig.secureConnection = false;
           break;
       }
 
