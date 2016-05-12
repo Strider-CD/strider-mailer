@@ -35,11 +35,21 @@ module.exports = function (config) {
         host: smtp.host,
         port: parseInt(smtp.port, 10)
       };
-
-			// enable secureConnection is port is 465 to use encrypted handshake
-			if (smtpConfig.port == 465) {
-				smtpConfig.secureConnection = true;
-			}
+      switch (true) {
+        case (smtp.secure.toLowerCase() === "true"):
+          smtpConfig.secureConnection = true;
+          break;
+        case (smtp.secure.toLowerCase() === "false"):
+          smtpConfig.secureConnection = false;
+          break;
+        //if secure is not set by config, check traditionally secured ports
+        case (!smtp.secure && smtpConfig.port == 465 || 587):
+          smtpConfig.secureConnection = true;
+          break;
+        case (!smtp.secure):
+          console.log('WARNING: no SMTP Secure not configured. Turn "false" by dafaults.');
+          break;
+      }
 
       // allow anonymous SMTP login if user and pass are not defined
       if (smtp.auth && smtp.auth.user && smtp.auth.pass) {
