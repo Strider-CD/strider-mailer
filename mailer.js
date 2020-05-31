@@ -1,7 +1,7 @@
-var debug = require('debug')('strider-mailer');
-var each = require('lodash.foreach');
-var everypaas = require('everypaas');
-var nodemailer = require('nodemailer');
+const debug = require('debug')('strider-mailer');
+const each = require('lodash.foreach');
+const everypaas = require('everypaas');
+const nodemailer = require('nodemailer');
 
 module.exports = function (config) {
   /*
@@ -10,9 +10,11 @@ module.exports = function (config) {
   // Default to printing a warning
   var smtpTransport = {
     sendMail: function (opts, cb) {
-      debug('WARNING: no SMTP transport detected nor configured. Cannot send email.');
-      cb(null, {message: null});
-    }
+      debug(
+        'WARNING: no SMTP transport detected nor configured. Cannot send email.'
+      );
+      cb(null, { message: null });
+    },
   };
 
   // Try using SendGrid / Mailgun
@@ -26,15 +28,15 @@ module.exports = function (config) {
         service: 'SendGrid',
         auth: {
           user: config.sendgrid.username,
-          pass: config.sendgrid.password
-        }
+          pass: config.sendgrid.password,
+        },
       });
     } else if (config.smtp) {
       debug('Using SMTP transport from config');
       var smtp = config.smtp;
       var smtpConfig = {
         host: smtp.host,
-        port: parseInt(smtp.port, 10)
+        port: parseInt(smtp.port, 10),
       };
 
       // enable secureConnection is port is 465 to use encrypted handshake
@@ -46,7 +48,7 @@ module.exports = function (config) {
       if (smtp.auth && smtp.auth.user && smtp.auth.pass) {
         smtpConfig.auth = {
           user: smtp.auth.user,
-          pass: smtp.auth.pass
+          pass: smtp.auth.pass,
         };
       }
 
@@ -65,7 +67,7 @@ module.exports = function (config) {
       to: to, // list of receivers
       subject: subject, // Subject line
       text: textBody, // plaintext body_template
-      html: htmlBody // html body
+      html: htmlBody, // html body
     };
     // send mail with defined transport object
     smtpTransport.sendMail(mailOptions, function (error, response) {
@@ -97,7 +99,9 @@ module.exports = function (config) {
       start = 0;
     }
 
-    var tlog = stdmerged.slice(start, stdmerged.length - 1).replace(/^\s+|\s+$/g, '');
+    var tlog = stdmerged
+      .slice(start, stdmerged.length - 1)
+      .replace(/^\s+|\s+$/g, '');
     // Start each line with a space
     var tlines = tlog.split('\n');
     var b = new Buffer(8192);
@@ -123,15 +127,17 @@ module.exports = function (config) {
     var inSeconds = (finish - start) / 1000;
 
     if (inSeconds > 60) {
-      return (Math.floor(inSeconds / 60) + 'm ' + Math.round(inSeconds % 60) + 's');
+      return (
+        Math.floor(inSeconds / 60) + 'm ' + Math.round(inSeconds % 60) + 's'
+      );
     } else {
-      return (Math.round(inSeconds) + 's');
+      return Math.round(inSeconds) + 's';
     }
   }
 
   return {
     send: send,
     format_stdmerged: format_stdmerged,
-    elapsed_time: elapsed_time
+    elapsed_time: elapsed_time,
   };
 };
